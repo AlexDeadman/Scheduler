@@ -20,18 +20,7 @@ class ApiController {
         $table = self::$TABLES[$endpoint];
         $query = $this->pdo->query("SELECT * FROM $table");
 
-        $results = array_map(
-            function ($ent) {
-                $json = [];
-                $json['attributes'] = $ent;
-                $json['id'] = $ent['id'];
-                $json['type'] = 'Lecturer';
-                $json['relationships']['disciplines']['data'] = [];
-                $json['relationships']['disciplines']['meta']['count'] = 0;
-                return $json;
-            },
-            $query->fetchAll(PDO::FETCH_ASSOC),
-        );
+        $results = $query->fetchAll(PDO::FETCH_ASSOC);
         return json_encode(array('data' => $results));
     }
 
@@ -43,9 +32,12 @@ class ApiController {
         return json_encode($query->fetch(PDO::FETCH_ASSOC));
     }
 
-    public function create(string $endpoint, string $body) {
-        $ent = json_decode($body)->data->attributes;
+    public function create(string $endpoint, string $body): string {
+        $ent = json_decode($body);
         $this->prepare_insert(self::$TABLES[$endpoint], $ent)->execute();
+
+        $ent->id = $this->pdo->lastInsertId();
+        return json_encode($ent);
     }
 
     public function delete(string $endpoint, int $id) {
@@ -54,9 +46,12 @@ class ApiController {
         $query->execute(array($id));
     }
 
-    public function update(string $endpoint, int $id, string $body) {
+    public function update(string $endpoint, int $id, string $body): string{
         $disc = json_decode($body);
         $this->prepare_update(self::$TABLES[$endpoint], $disc)->execute(array($id));
+
+        $disc->id = $id;
+        return json_encode($disc);
     }
 
     private function generateList(array $data, string $endpoint): string {
@@ -82,7 +77,7 @@ class ApiController {
         $names = implode(',', array_keys(get_object_vars($entity)));
         $values = implode("','", get_object_vars($entity));
 
-        return $this->pdo->query("INSERT INTO $table ($names) VALUES ('$values')");
+        return $this->pdo->prepare("INSERT INTO $table ($names) VALUES ('$values')");
     }
 }
 

@@ -15,7 +15,7 @@ export const Methods = {
         })
     },
     update(item, tableName) {
-        return HTTP.put(`/api/${tableName}/${item.data.id}/`, item).then(response => {
+        return HTTP.put(`/api/${tableName}/${item.id}/`, item).then(response => {
             return response.data
         })
     },

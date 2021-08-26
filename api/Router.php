@@ -15,7 +15,7 @@ class Router {
         header('Content-Type: application/json');
         header('Access-Control-Allow-Headers: *', false);
         header('Access-Control-Allow-Origin: *', false);
-//        header('Access-Control-Allow-Methods: *', false);
+        header('Access-Control-Allow-Methods: *', false);
 
         if ($path[0] == 'api') {
             $this->route_api($path);
@@ -27,7 +27,7 @@ class Router {
             if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 echo $this->api->getAll($path[1]);
             } else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                $this->api->create($path[1], file_get_contents('php://input'));
+                echo $this->api->create($path[1], file_get_contents('php://input'));
             }
         } else if (!empty($path[1]) && !empty($path[2])) {
             $id = intval($path[2]);
@@ -37,7 +37,7 @@ class Router {
             } else if ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
                 $this->api->delete($path[1], $id);
             } else if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
-                $this->api->update($path[1], $id, file_get_contents('php://input'));
+                echo $this->api->update($path[1], $id, file_get_contents('php://input'));
             }
         }
     }

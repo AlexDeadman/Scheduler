@@ -220,6 +220,8 @@ export default {
         },
         editItem(item) {
             this.clearForm()
+            //tempo
+            console.log(JSON.parse(JSON.stringify(item)))
             this.currentItem = JSON.parse(JSON.stringify(item))
             this.dialog = true
         }

@@ -32,7 +32,7 @@
                         <v-card-text>
                             <v-form ref="form" lazy-validation>
                                 <v-text-field
-                                    v-model="currentItem.attributes.surname"
+                                    v-model="currentItem.surname"
                                     :counter="30"
                                     :rules="nameRules"
                                     class="mx-3 my-8"
@@ -40,7 +40,7 @@
                                     label="Фамилия*"
                                 ></v-text-field>
                                 <v-text-field
-                                    v-model="currentItem.attributes.first_name"
+                                    v-model="currentItem.first_name"
                                     :counter="30"
                                     :rules="nameRules"
                                     class="mx-3 mb-8"
@@ -48,25 +48,13 @@
                                     label="Имя*"
                                 ></v-text-field>
                                 <v-text-field
-                                    v-model="currentItem.attributes.patronymic"
+                                    v-model="currentItem.patronymic"
                                     :counter="30"
                                     :rules="patronymicRules"
                                     class="mx-3 mb-8"
                                     dense
                                     label="Отчество"
                                 ></v-text-field>
-                                <v-select
-                                    v-if="disciplines.data"
-                                    v-model="selected"
-                                    :items="disciplines.data"
-                                    :rules="disciplinesRules"
-                                    class="mx-3 mb-8"
-                                    dense
-                                    item-text="attributes.name"
-                                    item-value="id"
-                                    label="Дисциплины*"
-                                    multiple
-                                ></v-select>
                             </v-form>
                             <small>*обязательные поля</small>
                         </v-card-text>
@@ -104,8 +92,6 @@
                 :headers="headers"
                 :items="lecturers.data"
                 :search="search"
-                multi-sort
-                show-expand
             >
                 <template v-slot:no-data>
                     Таблица пуста
@@ -120,17 +106,6 @@
                     <v-icon small @click="deleteItem(item)">
                         mdi-delete
                     </v-icon>
-                </template>
-                <template v-slot:expanded-item="{ headers, item }">
-                    <td :colspan="headers.length">
-                        <div
-                            v-for="discipline in item.relationships.disciplines.data"
-                            v-if="disciplines.data"
-                            class="ml-6 my-2"
-                        >
-                            {{ disciplines.data.find(dis => dis.id === discipline.id).attributes.name }}
-                        </div>
-                    </td>
                 </template>
             </v-data-table>
         </v-card>
@@ -165,20 +140,17 @@ export default {
             tableTitle: 'Список преподавателей',
             search: '',
             headers: [
-                {text: 'Фамилия', value: 'attributes.surname'},
-                {text: 'Имя', value: 'attributes.first_name'},
-                {text: 'Отчество', value: 'attributes.patronymic'},
-                {text: 'Дисциплины', value: 'data-table-expand'},
+                {text: 'Фамилия', value: 'surname'},
+                {text: 'Имя', value: 'first_name'},
+                {text: 'Отчество', value: 'patronymic'},
                 {text: 'Действия', value: 'actions', sortable: false},
             ],
             dialogDelete: false,
             defaultItem: {
                 id: null,
-                attributes: {
-                    first_name: '',
-                    surname: '',
-                    patronymic: ''
-                },
+                first_name: '',
+                surname: '',
+                patronymic: ''
             },
             currentItem: null,
             originalItem: null,
@@ -255,18 +227,7 @@ export default {
                 }
                 this.$store.dispatch(
                     type,
-                    {
-                        data: {
-                            type: "Lecturer",
-                            id: this.currentItem.id,
-                            attributes: this.currentItem.attributes,
-                            relationships: {
-                                disciplines: {
-                                    data: this.selected
-                                }
-                            }
-                        }
-                    }
+                    this.currentItem
                 ).then(() => {
                     this.close()
                     this.successSnackbar = true
@@ -279,8 +240,11 @@ export default {
         editItem(item) {
             this.clearForm()
             this.currentItem = JSON.parse(JSON.stringify(item))
+
+            // tempo
+            console.log(this.currentItem.id)
+
             this.dialog = true
-            this.selected = item.relationships.disciplines.data.map(it => it.id)
         }
     }
 }
