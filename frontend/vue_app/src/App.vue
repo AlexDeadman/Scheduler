@@ -4,7 +4,8 @@
             <v-btn icon plain to="/">
                 <v-icon>mdi-home</v-icon>
             </v-btn>
-            <div v-if="isLoggedIn">
+<!--            <div v-if="isLoggedIn">-->
+            <div>
                 <v-btn plain to="/schedule">Расписание</v-btn>
                 <v-btn plain to="/lecturers">Преподаватели</v-btn>
                 <v-btn plain to="/disciplines">Дисциплины</v-btn>
@@ -22,16 +23,16 @@
                     <v-icon>mdi-theme-light-dark</v-icon>
                 </template>
             </v-switch>
-            <div v-if="isLoggedIn" class="ml-5">
-                <v-btn @click="exit">
-                    Выход
-                </v-btn>
-            </div>
-            <div v-else class="ml-5">
-                <v-btn to="/login">
-                    Вход
-                </v-btn>
-            </div>
+<!--            <div v-if="isLoggedIn" class="ml-5">-->
+<!--                <v-btn @click="exit">-->
+<!--                    Выход-->
+<!--                </v-btn>-->
+<!--            </div>-->
+<!--            <div v-else class="ml-5">-->
+<!--                <v-btn to="/login">-->
+<!--                    Вход-->
+<!--                </v-btn>-->
+<!--            </div>-->
         </v-app-bar>
         <v-main>
             <router-view/>

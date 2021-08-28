@@ -238,12 +238,7 @@ export default {
             }
         },
         editItem(item) {
-            this.clearForm()
             this.currentItem = JSON.parse(JSON.stringify(item))
-
-            // tempo
-            console.log(this.currentItem.id)
-
             this.dialog = true
         }
     }

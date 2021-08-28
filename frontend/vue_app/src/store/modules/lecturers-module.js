@@ -12,14 +12,14 @@ export default {
             state.lecturers.data.unshift(lecturer)
         },
         REMOVE_LECTURER(state, {id}) {
-            let index = state.lecturers.data.findIndex(lecturer => lecturer.id === id)
+            let index = state.lecturers.data.findIndex(lecturer => lecturer.id == id)
             state.lecturers.data.splice(index, 1)
         },
         SET_LECTURERS(state, {lecturers}) {
             state.lecturers = lecturers
         },
         UPDATE_LECTURER(state, lecturer) {
-            let index = state.lecturers.data.findIndex(l => l.id === lecturer.id)
+            let index = state.lecturers.data.findIndex(l => l.id == lecturer.id)
             state.lecturers.data.splice(index, 1)
             state.lecturers.data.unshift(lecturer)
         }

@@ -6,7 +6,7 @@ if (localStorage.getItem("auth_token")) {
 }
 
 export const HTTP = axios.create({
-    baseURL: "http://localhost:8000/",
+    baseURL: "http://192.168.0.5:8000",
     headers: {
         "Content-type": "application/json",
     }
