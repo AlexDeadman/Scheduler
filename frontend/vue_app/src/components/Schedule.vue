@@ -20,14 +20,14 @@
                         </v-card-title>
                         <v-card-text>
                             <h3 class="my-3 mx-3">Группа:
-                                {{ getGroupById(this.currentItem.attributes.group) }}
+                                {{ getGroupById(this.currentItem.group_id) }}
                             </h3>
                             <h3 class="my-3 mx-3 mb-7">День недели:
-                                {{ getDay(this.currentItem.attributes.day_of_the_week) }}
+                                {{ getDay(this.currentItem.day_of_the_week) }}
                             </h3>
                             <v-form ref="form" lazy-validation>
                                 <v-select
-                                    v-model="currentItem.attributes.lecture_begin"
+                                    v-model="currentItem.lecture_begin"
                                     :items="beginTime"
                                     :rules="rules"
                                     class="mx-3 mb-8"
@@ -38,19 +38,19 @@
                                 ></v-select>
                                 <v-select
                                     v-if="audiences.data"
-                                    v-model="currentItem.attributes.audience"
+                                    v-model="currentItem.audience_id"
                                     :items="audiences.data"
                                     :rules="rules"
                                     class="mx-3 mb-8"
                                     dense
-                                    item-text="attributes.number"
+                                    item-text="number"
                                     item-value="id"
                                     label="Аудитория*"
                                 ></v-select>
                                 <v-select
                                     v-if="lecturers.data"
-                                    v-model="currentItem.attributes.lecturer"
-                                    :item-text="item => getFullName(item.attributes)"
+                                    v-model="currentItem.lecturer_id"
+                                    :item-text="item => getFullName(item)"
                                     :items="lecturers.data"
                                     :rules="rules"
                                     class="mx-3 mb-8"
@@ -60,12 +60,12 @@
                                 ></v-select>
                                 <v-select
                                     v-if="disciplines.data"
-                                    v-model="currentItem.attributes.discipline"
+                                    v-model="currentItem.discipline_id"
                                     :items="disciplines.data"
                                     :rules="rules"
                                     class="mx-3 mb-8"
                                     dense
-                                    item-text="attributes.name"
+                                    item-text="name"
                                     item-value="id"
                                     label="Дисциплина*"
                                 ></v-select>
@@ -164,37 +164,37 @@
                                     <tr v-for="
                                             schedule in groupSchedule(item)
                                             .filter(
-                                                sc => sc.attributes.day_of_the_week === day.number
+                                                sc => sc.day_of_the_week === day.number
                                             )
                                         ">
-                                        <td>{{ schedule.attributes.lecture_begin }}</td>
+                                        <td>{{ schedule.lecture_begin }}</td>
                                         <td>
                                             {{
                                                 beginTime.find(
-                                                    bt => bt.lecture === schedule.attributes.lecture_begin
+                                                    bt => bt.lecture === schedule.lecture_begin
                                                 ).time
                                             }}
                                         </td>
                                         <td>
                                             {{
                                                 audiences.data.find(
-                                                    aud => aud.id === schedule.relationships.audience.data.id
-                                                ).attributes.number
+                                                    aud => aud.id === schedule.audience_id
+                                                ).number
                                             }}
                                         </td>
                                         <td>
                                             {{
                                                 disciplines.data.find(
-                                                    dis => dis.id === schedule.relationships.discipline.data.id
-                                                ).attributes.name
+                                                    dis => dis.id === schedule.discipline_id
+                                                ).name
                                             }}
                                         </td>
                                         <td>
                                             {{
                                                 getFullName(
                                                     lecturers.data.find(
-                                                        lec => lec.id === schedule.relationships.lecturer.data.id
-                                                    ).attributes
+                                                        lec => lec.id === schedule.lecturer_id
+                                                    )
                                                 )
                                             }}
                                         </td>
@@ -247,7 +247,7 @@ export default {
             search: '',
             headers: [
                 {text: '', sortable: false},
-                {text: 'Номер', value: 'attributes.number'},
+                {text: 'Номер', value: 'number'},
                 {text: 'Расписание', value: 'data-table-expand'},
                 {text: '', sortable: false},
             ],
@@ -267,27 +267,15 @@ export default {
                 {lecture: 5, time: '15:20'},
                 {lecture: 6, time: '17:00'},
             ],
-
-            motherfuckers: [
-                "Motherfucker number 1",
-                "Motherfucker number 3",
-                "Motherfucker number 4",
-                "Motherfucker number 5",
-                "Motherfucker number 6",
-            ],
-
             dialogDelete: false,
             defaultItem: {
-                type: "Schedule",
                 id: null,
-                attributes: {
-                    day_of_the_week: '',
-                    lecture_begin: '',
-                    lecturer: '',
-                    discipline: '',
-                    group: '',
-                    audience: ''
-                }
+                day_of_the_week: '',
+                lecture_begin: '',
+                lecturer_id: '',
+                discipline_id: '',
+                group_id: '',
+                audience_id: ''
             },
             currentItem: null,
             originalItem: null,
@@ -357,9 +345,6 @@ export default {
         },
         save() {
             if (this.$refs.form.validate()) {
-
-                console.log(this.currentItem)
-
                 let type
                 if (this.currentItem.id) {
                     type = 'updateSchedule'
@@ -370,9 +355,7 @@ export default {
                 }
                 this.$store.dispatch(
                     type,
-                    {
-                        data: this.currentItem
-                    }
+                    this.currentItem
                 ).then(() => {
                     this.close()
                     this.successSnackbar = true
@@ -383,29 +366,19 @@ export default {
             }
         },
         editItem(item) {
-            // this.clearForm()
-
-            // Отвратительно, но не знаю, как иначе
-            this.currentItem.attributes.discipline = item.relationships.discipline.data.id
-            this.currentItem.attributes.day_of_the_week = item.attributes.day_of_the_week
-            this.currentItem.attributes.lecturer = item.relationships.lecturer.data.id
-            this.currentItem.attributes.audience = item.relationships.audience.data.id
-            this.currentItem.attributes.lecture_begin = item.attributes.lecture_begin
-            this.currentItem.attributes.group = item.relationships.group.data.id
-            this.currentItem.id = item.id
-
+            this.currentItem = JSON.parse(JSON.stringify(item))
             this.dialog = true
         },
         newItem(group, day) {
             this.clearForm()
-            this.currentItem.attributes.day_of_the_week = day
-            this.currentItem.attributes.group = group.id
+            this.currentItem.day_of_the_week = day
+            this.currentItem.group_id = group.id
             this.dialog = true
         },
         groupSchedule(item) {
             if (this.schedules.data) {
                 return this.schedules.data.filter(
-                    sch => sch.relationships.group.data.id === item.id
+                    sch => sch.group_id === item.id
                 )
             }
         },
@@ -428,7 +401,7 @@ export default {
             if (id) {
                 return this.groups.data.find(
                     gro => gro.id === id
-                ).attributes.number
+                ).number
             }
         }
     }

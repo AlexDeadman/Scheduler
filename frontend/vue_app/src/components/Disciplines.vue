@@ -32,7 +32,7 @@
                         <v-card-text>
                             <v-form ref="form" lazy-validation>
                                 <v-text-field
-                                    v-model="currentItem.attributes.name"
+                                    v-model="currentItem.name"
                                     :counter="100"
                                     :rules="nameRules"
                                     class="mx-3 my-8"
@@ -125,15 +125,13 @@ export default {
             tableTitle: 'Список дисциплин',
             search: '',
             headers: [
-                {text: 'Наименование', value: 'attributes.name'},
+                {text: 'Наименование', value: 'name'},
                 {text: 'Действия', value: 'actions', sortable: false},
             ],
             dialogDelete: false,
             defaultItem: {
                 id: null,
-                attributes: {
-                    name: ''
-                },
+                name: ''
             },
             currentItem: null,
             originalItem: null,
@@ -202,13 +200,7 @@ export default {
                 }
                 this.$store.dispatch(
                     type,
-                    {
-                        data: {
-                            type: "Discipline",
-                            id: this.currentItem.id,
-                            attributes: this.currentItem.attributes,
-                        }
-                    }
+                    this.currentItem
                 ).then(() => {
                     this.close()
                     this.successSnackbar = true
@@ -219,9 +211,6 @@ export default {
             }
         },
         editItem(item) {
-            this.clearForm()
-            //tempo
-            console.log(JSON.parse(JSON.stringify(item)))
             this.currentItem = JSON.parse(JSON.stringify(item))
             this.dialog = true
         }

@@ -32,7 +32,7 @@
                         <v-card-text>
                             <v-form ref="form" lazy-validation>
                                 <v-text-field
-                                    v-model="currentItem.attributes.number"
+                                    v-model="currentItem.number"
                                     :counter="5"
                                     :rules="numberRules"
                                     class="mx-3 my-8"
@@ -40,25 +40,13 @@
                                     label="Номер*"
                                 ></v-text-field>
                                 <v-text-field
-                                    v-model="currentItem.attributes.students_quantity"
+                                    v-model="currentItem.students_quantity"
                                     :counter="2"
                                     :rules="quantityRules"
                                     class="mx-3 mb-8"
                                     dense
                                     label="Количество студентов*"
                                 ></v-text-field>
-                                <v-select
-                                    v-if="disciplines.data"
-                                    v-model="selected"
-                                    :items="disciplines.data"
-                                    :rules="disciplinesRules"
-                                    class="mx-3 mb-8"
-                                    dense
-                                    item-text="attributes.name"
-                                    item-value="id"
-                                    label="Дисциплины*"
-                                    multiple
-                                ></v-select>
                             </v-form>
                             <small>*обязательные поля</small>
                         </v-card-text>
@@ -97,7 +85,6 @@
                 :items="groups.data"
                 :search="search"
                 multi-sort
-                show-expand
             >
                 <template v-slot:no-data>
                     Таблица пуста
@@ -112,17 +99,6 @@
                     <v-icon small @click="deleteItem(item)">
                         mdi-delete
                     </v-icon>
-                </template>
-                <template v-slot:expanded-item="{ headers, item }">
-                    <td :colspan="headers.length">
-                        <div
-                            v-for="discipline in item.relationships.disciplines.data"
-                            v-if="disciplines.data"
-                            class="ml-6 my-2"
-                        >
-                            {{ disciplines.data.find(dis => dis.id === discipline.id).attributes.name }}
-                        </div>
-                    </td>
                 </template>
             </v-data-table>
         </v-card>
@@ -157,18 +133,15 @@ export default {
             tableTitle: 'Список групп',
             search: '',
             headers: [
-                {text: 'Номер', value: 'attributes.number'},
-                {text: 'Количество студентов', value: 'attributes.students_quantity'},
-                {text: 'Дисциплины', value: 'data-table-expand'},
+                {text: 'Номер', value: 'number'},
+                {text: 'Количество студентов', value: 'students_quantity'},
                 {text: 'Действия', value: 'actions', sortable: false},
             ],
             dialogDelete: false,
             defaultItem: {
                 id: null,
-                attributes: {
-                    number: '',
-                    students_quantity: '',
-                },
+                number: '',
+                students_quantity: '',
             },
             currentItem: null,
             originalItem: null,
@@ -194,11 +167,10 @@ export default {
     },
     name: "Groups",
     computed: {
-        ...mapGetters(['groups', 'disciplines']),
+        ...mapGetters(['groups']),
     },
     beforeMount() {
         this.$store.dispatch('getGroups')
-        this.$store.dispatch('getDisciplines')
         this.currentItem = this.defaultItem
     },
     methods: {
@@ -250,18 +222,7 @@ export default {
                 }
                 this.$store.dispatch(
                     type,
-                    {
-                        data: {
-                            type: "Group",
-                            id: this.currentItem.id,
-                            attributes: this.currentItem.attributes,
-                            relationships: {
-                                disciplines: {
-                                    data: this.selected
-                                }
-                            }
-                        }
-                    }
+                    this.currentItem
                 ).then(() => {
                     this.close()
                     this.successSnackbar = true
@@ -272,10 +233,8 @@ export default {
             }
         },
         editItem(item) {
-            this.clearForm()
             this.currentItem = JSON.parse(JSON.stringify(item))
             this.dialog = true
-            this.selected = item.relationships.disciplines.data.map(it => it.id)
         }
     }
 }

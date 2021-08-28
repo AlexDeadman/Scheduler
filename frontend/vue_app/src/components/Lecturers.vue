@@ -172,10 +172,9 @@ export default {
         }
     },
     name: "Lecturers",
-    computed: mapGetters(['lecturers', 'disciplines']),
+    computed: mapGetters(['lecturers']),
     beforeMount() {
         this.$store.dispatch('getLecturers')
-        this.$store.dispatch('getDisciplines')
         this.currentItem = this.defaultItem
     },
     methods: {

@@ -10,19 +10,19 @@ export default {
     },
     mutations: {
         ADD_AUDIENCE(state, audience) {
-            state.audiences.data.unshift(audience.data)
+            state.audiences.data.unshift(audience)
         },
         REMOVE_AUDIENCE(state, {id}) {
-            let index = state.audiences.data.findIndex(audience => audience.id === id)
+            let index = state.audiences.data.findIndex(audience => audience.id == id)
             state.audiences.data.splice(index, 1)
         },
         SET_AUDIENCES(state, {audiences}) {
             state.audiences = audiences
         },
         UPDATE_AUDIENCE(state, audience) {
-            let index = state.audiences.data.findIndex(d => d.id === audience.data.id)
+            let index = state.audiences.data.findIndex(d => d.id == audience.id)
             state.audiences.data.splice(index, 1)
-            state.audiences.data.unshift(audience.data)
+            state.audiences.data.unshift(audience)
         }
     },
     actions: {

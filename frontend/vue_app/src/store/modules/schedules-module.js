@@ -9,19 +9,19 @@ export default {
     },
     mutations: {
         ADD_SCHEDULE(state, schedule) {
-            state.schedules.data.unshift(schedule.data)
+            state.schedules.data.unshift(schedule)
         },
         REMOVE_SCHEDULE(state, {id}) {
-            let index = state.schedules.data.findIndex(schedule => schedule.id === id)
+            let index = state.schedules.data.findIndex(schedule => schedule.id == id)
             state.schedules.data.splice(index, 1)
         },
         SET_SCHEDULES(state, {schedules}) {
             state.schedules = schedules
         },
         UPDATE_SCHEDULE(state, schedule) {
-            let index = state.schedules.data.findIndex(s => s.id === schedule.data.id)
+            let index = state.schedules.data.findIndex(s => s.id == schedule.id)
             state.schedules.data.splice(index, 1)
-            state.schedules.data.unshift(schedule.data)
+            state.schedules.data.unshift(schedule)
         }
     },
     actions: {

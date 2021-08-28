@@ -10,19 +10,19 @@ export default {
     },
     mutations: {
         ADD_DISCIPLINE(state, discipline) {
-            state.disciplines.data.unshift(discipline.data)
+            state.disciplines.data.unshift(discipline)
         },
         REMOVE_DISCIPLINE(state, {id}) {
-            let index = state.disciplines.data.findIndex(discipline => discipline.id === id)
+            let index = state.disciplines.data.findIndex(discipline => discipline.id == id)
             state.disciplines.data.splice(index, 1)
         },
         SET_DISCIPLINES(state, {disciplines}) {
             state.disciplines = disciplines
         },
         UPDATE_DISCIPLINE(state, discipline) {
-            let index = state.disciplines.data.findIndex(d => d.id === discipline.data.id)
+            let index = state.disciplines.data.findIndex(d => d.id == discipline.id)
             state.disciplines.data.splice(index, 1)
-            state.disciplines.data.unshift(discipline.data)
+            state.disciplines.data.unshift(discipline)
         }
     },
     actions: {

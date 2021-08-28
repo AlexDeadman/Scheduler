@@ -32,7 +32,7 @@
                         <v-card-text>
                             <v-form ref="form" lazy-validation>
                                 <v-text-field
-                                    v-model="currentItem.attributes.number"
+                                    v-model="currentItem.number"
                                     :counter="3"
                                     :rules="numberRules"
                                     class="mx-3 my-8"
@@ -40,7 +40,7 @@
                                     label="Номер*"
                                 ></v-text-field>
                                 <v-text-field
-                                    v-model="currentItem.attributes.aud_type"
+                                    v-model="currentItem.aud_type"
                                     :counter="30"
                                     :rules="typeRules"
                                     class="mx-3 my-8"
@@ -133,17 +133,15 @@ export default {
             tableTitle: 'Список аудиторий',
             search: '',
             headers: [
-                {text: 'Номер', value: 'attributes.number'},
-                {text: 'Тип', value: 'attributes.aud_type'},
+                {text: 'Номер', value: 'number'},
+                {text: 'Тип', value: 'aud_type'},
                 {text: 'Действия', value: 'actions', sortable: false},
             ],
             dialogDelete: false,
             defaultItem: {
                 id: null,
-                attributes: {
-                    number: '',
-                    aud_type: ''
-                },
+                number: '',
+                aud_type: ''
             },
             currentItem: null,
             originalItem: null,
@@ -215,13 +213,7 @@ export default {
                 }
                 this.$store.dispatch(
                     type,
-                    {
-                        data: {
-                            type: "Audience",
-                            id: this.currentItem.id,
-                            attributes: this.currentItem.attributes,
-                        }
-                    }
+                    this.currentItem
                 ).then(() => {
                     this.close()
                     this.successSnackbar = true
@@ -232,7 +224,6 @@ export default {
             }
         },
         editItem(item) {
-            this.clearForm()
             this.currentItem = JSON.parse(JSON.stringify(item))
             this.dialog = true
         }

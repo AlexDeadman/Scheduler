@@ -9,19 +9,19 @@ export default {
     },
     mutations: {
         ADD_GROUP(state, group) {
-            state.groups.data.unshift(group.data)
+            state.groups.data.unshift(group)
         },
         REMOVE_GROUP(state, {id}) {
-            let index = state.groups.data.findIndex(group => group.id === id)
+            let index = state.groups.data.findIndex(group => group.id == id)
             state.groups.data.splice(index, 1)
         },
         SET_GROUPS(state, {groups}) {
             state.groups = groups
         },
         UPDATE_GROUP(state, group) {
-            let index = state.groups.data.findIndex(g => g.id === group.data.id)
+            let index = state.groups.data.findIndex(g => g.id == group.id)
             state.groups.data.splice(index, 1)
-            state.groups.data.unshift(group.data)
+            state.groups.data.unshift(group)
         }
     },
     actions: {
