@@ -54,12 +54,6 @@ class ApiController {
         return json_encode($disc);
     }
 
-    private function generateList(array $data, string $endpoint): string {
-        $json = [];
-        $json['data'][0]['relationships'][$endpoint]['data'] = $data;
-        return json_encode($json);
-    }
-
     private function prepare_update(string $table, mixed $entity): PDOStatement {
         unset($entity->id);
 
